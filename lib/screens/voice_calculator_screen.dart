@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:smart_calc/providers/calculation_provider.dart';
 
@@ -23,6 +24,7 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
     _initializeSpeech();
   }
 
+  // Initialize the Speech-to-Text engine
   Future<void> _initializeSpeech() async {
     bool available = await _speech.initialize(
       onStatus: (status) {
@@ -31,10 +33,14 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
           _processVoiceInput();
         }
       },
-      onError: (error) => print('Error: $error'),
+      onError: (error) {
+        print('Error: $error');
+        _handleSpeechError(error);
+      },
     );
+
     if (!mounted) return;
-    
+
     if (!available) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Speech recognition not available')),
@@ -42,13 +48,14 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
     }
   }
 
+  // Handle the processing of the voice input
   Future<void> _processVoiceInput() async {
     if (_transcription.isEmpty) return;
 
     setState(() => _isProcessing = true);
     try {
-      final result = await context.read<CalculationProvider>()
-          .processVoiceInput(_transcription);
+      // Call the provider's method to process the voice input
+      final result = await context.read<CalculationProvider>().processVoiceInput(_transcription);
       setState(() => _result = result);
     } catch (e) {
       setState(() => _result = 'Error processing voice input: $e');
@@ -57,6 +64,7 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
     }
   }
 
+  // Start the speech recognition
   Future<void> _startListening() async {
     setState(() {
       _transcription = '';
@@ -73,9 +81,18 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
     }
   }
 
+  // Stop the speech recognition
   void _stopListening() {
     _speech.stop();
     setState(() => _isListening = false);
+  }
+
+  // Handle errors during speech recognition
+  void _handleSpeechError(SpeechRecognitionError error) {
+    setState(() => _isListening = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Speech error: ${error.errorMsg}')),
+    );
   }
 
   @override
@@ -86,9 +103,11 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.show_chart),
-            onPressed: _result.isNotEmpty ? () {
-              // TODO: Implement graph view
-            } : null,
+            onPressed: _result.isNotEmpty
+                ? () {
+                    // TODO: Implement graph view
+                  }
+                : null,
           ),
         ],
       ),
@@ -96,6 +115,7 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // Display the transcription of the voice input
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -107,7 +127,9 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      _transcription.isEmpty ? 'Tap the microphone to start' : _transcription,
+                      _transcription.isEmpty
+                          ? 'Tap the microphone to start'
+                          : _transcription,
                       style: Theme.of(context).textTheme.bodyLarge,
                       textAlign: TextAlign.center,
                     ),
@@ -116,6 +138,7 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
               ),
             ),
             const SizedBox(height: 24),
+            // Display the result of the calculation
             if (_result.isNotEmpty)
               Card(
                 child: Padding(
@@ -136,6 +159,7 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
                 ),
               ),
             const Spacer(),
+            // Microphone button for initiating voice input
             Center(
               child: GestureDetector(
                 onTapDown: (_) => _startListening(),
@@ -145,16 +169,16 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: _isListening 
-                        ? Theme.of(context).colorScheme.primary 
+                    color: _isListening
+                        ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.primaryContainer,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     _isListening ? Icons.mic : Icons.mic_none,
                     size: 40,
-                    color: _isListening 
-                        ? Theme.of(context).colorScheme.onPrimary 
+                    color: _isListening
+                        ? Theme.of(context).colorScheme.onPrimary
                         : Theme.of(context).colorScheme.onPrimaryContainer,
                   ),
                 ),

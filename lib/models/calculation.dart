@@ -1,46 +1,27 @@
-import 'package:equatable/equatable.dart';
+class Calculation {
+  final String expression;
+  final String result;
+  final String type;
 
-enum CalculationType {
-  draw,
-  voice,
-  stepByStep,
-  graph,
-  conversion
-}
-
-class Calculation extends Equatable {
-  final String input;
-  final String output;
-  final CalculationType type;
-  final DateTime timestamp;
-
-  const Calculation({
-    required this.input,
-    required this.output,
+  Calculation({
+    required this.expression,
+    required this.result,
     required this.type,
-    required this.timestamp,
   });
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'input': input,
-      'output': output,
-      'type': type.toString(),
-      'timestamp': timestamp.toIso8601String(),
+      'expression': expression,
+      'result': result,
+      'type': type,
     };
   }
 
-  factory Calculation.fromJson(Map<String, dynamic> json) {
+  factory Calculation.fromMap(Map<String, dynamic> map) {
     return Calculation(
-      input: json['input'],
-      output: json['output'],
-      type: CalculationType.values.firstWhere(
-        (e) => e.toString() == json['type'],
-      ),
-      timestamp: DateTime.parse(json['timestamp']),
+      expression: map['expression'] ?? '',
+      result: map['result'] ?? '',
+      type: map['type'] ?? '',
     );
   }
-
-  @override
-  List<Object> get props => [input, output, type, timestamp];
 }

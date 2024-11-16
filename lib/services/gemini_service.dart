@@ -1,80 +1,62 @@
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class GeminiService {
   static const String apiKey = 'AIzaSyCoOJSQAohg5WVYq_isT3-YJ-0Vfqvt5dI';
-  late final GenerativeModel _model;
+  static const String baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 
-  GeminiService() {
-    _model = GenerativeModel(
-      model: 'gemini-pro',
-      apiKey: apiKey,
-    );
-  }
-
-  Future<String> processDrawing(String description) async {
+  // Process an image for calculation using the Gemini API
+  Future<String> processImage(String base64Image) async {
     try {
-      final prompt = '''
-        Process this mathematical expression: $description
-        Provide the result in the following format:
-        Expression: [the interpreted expression]
-        Result: [the calculated result]
-        ''';
+      final response = await http.post(
+        Uri.parse('$baseUrl?key=$apiKey'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'contents': [{
+            'parts': [{
+              'inlineData': {
+                'mimeType': 'image/png',
+                'data': base64Image
+              }
+            }]
+          }],
+        }),
+      );
 
-      final content = [Content.text(prompt)];
-      final response = await _model.generateContent(content);
-      return response.text ?? 'Unable to process the expression';
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['candidates'][0]['content']['parts'][0]['text'];
+      } else {
+        throw Exception('Failed to process image');
+      }
     } catch (e) {
-      return 'Error processing the expression: $e';
+      throw Exception('Error processing image: $e');
     }
   }
 
-  Future<String> processVoiceInput(String voiceText) async {
+  // Process text input for calculation using the Gemini API
+  Future<String> processText(String text) async {
     try {
-      final prompt = '''
-        Calculate this mathematical expression from voice input: $voiceText
-        Provide the result in the following format:
-        Expression: [the interpreted expression]
-        Result: [the calculated result]
-        ''';
+      final response = await http.post(
+        Uri.parse('$baseUrl?key=$apiKey'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'contents': [{
+            'parts': [{
+              'text': text
+            }]
+          }],
+        }),
+      );
 
-      final content = [Content.text(prompt)];
-      final response = await _model.generateContent(content);
-      return response.text ?? 'Unable to process the voice input';
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['candidates'][0]['content']['parts'][0]['text'];
+      } else {
+        throw Exception('Failed to process text');
+      }
     } catch (e) {
-      return 'Error processing voice input: $e';
-    }
-  }
-
-  Future<String> getStepByStepSolution(String problem) async {
-    try {
-      final prompt = '''
-        Solve this mathematical problem step by step: $problem
-        Provide a detailed explanation of each step.
-        Format the response with clear step numbers and explanations.
-        ''';
-
-      final content = [Content.text(prompt)];
-      final response = await _model.generateContent(content);
-      return response.text ?? 'Unable to generate solution';
-    } catch (e) {
-      return 'Error generating solution: $e';
-    }
-  }
-
-  Future<String> generateGraphData(String expression) async {
-    try {
-      final prompt = '''
-        Generate coordinate points for graphing this mathematical expression: $expression
-        Provide points in the following format:
-        x,y
-        For x values from -10 to 10 in steps of 1
-        ''';
-
-      final content = [Content.text(prompt)];
-      final response = await _model.generateContent(content);
-      return response.text ?? 'Unable to generate graph data';
-    } catch (e) {
-      return 'Error generating graph data: $e';
+      throw Exception('Error processing text: $e');
     }
   }
 }
