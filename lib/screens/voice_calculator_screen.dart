@@ -54,9 +54,9 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
 
     setState(() => _isProcessing = true);
     try {
-      // Call the provider's method to process the voice input
+      // Call the provider's method to process the voice input using the Gemini API
       final result = await context.read<CalculationProvider>().processVoiceInput(_transcription);
-      setState(() => _result = result);
+      setState(() => _result = result); // Display the result
     } catch (e) {
       setState(() => _result = 'Error processing voice input: $e');
     } finally {
@@ -166,19 +166,28 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
                 onTapUp: (_) => _stopListening(),
                 onTapCancel: () => _stopListening(),
                 child: Container(
-                  width: 80,
-                  height: 80,
+                  width: 100,
+                  height: 100,
                   decoration: BoxDecoration(
                     color: _isListening
-                        ? Theme.of(context).colorScheme.primary
+                        ? Colors.redAccent.withOpacity(0.7) // Change color when listening
                         : Theme.of(context).colorScheme.primaryContainer,
                     shape: BoxShape.circle,
+                    boxShadow: _isListening
+                        ? [
+                            BoxShadow(
+                              color: Colors.red.withOpacity(0.5),
+                              blurRadius: 20,
+                              spreadRadius: 5,
+                            ),
+                          ]
+                        : [],
                   ),
                   child: Icon(
                     _isListening ? Icons.mic : Icons.mic_none,
-                    size: 40,
+                    size: 50,
                     color: _isListening
-                        ? Theme.of(context).colorScheme.onPrimary
+                        ? Colors.white
                         : Theme.of(context).colorScheme.onPrimaryContainer,
                   ),
                 ),

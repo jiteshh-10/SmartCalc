@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_calc/providers/calculation_provider.dart';
 import 'package:smart_calc/routes/app_routes.dart';
+import 'package:smart_calc/screens/home_screen.dart';
 import 'package:smart_calc/theme/app_theme.dart';
 
 void main() async {
@@ -33,6 +34,10 @@ class SmartCalcApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       initialRoute: AppRoutes.splash,
       routes: AppRoutes.getRoutes(),
+      // Fallback route handling
+      onUnknownRoute: (settings) => MaterialPageRoute(
+        builder: (context) => const HomeScreen(),
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_calc/routes/app_routes.dart';
 
 class FeatureCard extends StatelessWidget {
   final IconData icon;
@@ -17,7 +18,7 @@ class FeatureCard extends StatelessWidget {
     return Card(
       elevation: 2,
       child: InkWell(
-        onTap: () => Navigator.pushNamed(context, route),
+        onTap: () => Navigator.pushNamed(context, route), // Updated line to use the provided route
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.all(16),

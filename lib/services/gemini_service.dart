@@ -59,4 +59,6 @@ class GeminiService {
       throw Exception('Error processing text: $e');
     }
   }
+
+  void dispose() {}
 }

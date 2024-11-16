@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+import 'package:provider/provider.dart';
 import 'package:smart_calc/models/calculation_history.dart';
+import 'package:smart_calc/providers/calculation_provider.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -11,47 +11,11 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-  List<CalculationHistory> _history = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadHistory();
-  }
-
-  Future<void> _loadHistory() async {
-    final prefs = await SharedPreferences.getInstance();
-    final historyJson = prefs.getStringList('calculation_history') ?? [];
-    setState(() {
-      _history = historyJson
-          .map((item) => CalculationHistory.fromMap(json.decode(item)))
-          .toList();
-    });
-  }
-
-  Future<void> _deleteHistoryItem(String id) async {
-    setState(() {
-      _history.removeWhere((item) => item.id == id);
-    });
-    await _saveHistory();
-  }
-
-  Future<void> _clearHistory() async {
-    setState(() {
-      _history.clear();
-    });
-    await _saveHistory();
-  }
-
-  Future<void> _saveHistory() async {
-    final prefs = await SharedPreferences.getInstance();
-    final historyJson =
-        _history.map((item) => json.encode(item.toMap())).toList();
-    await prefs.setStringList('calculation_history', historyJson);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<CalculationProvider>();
+    final history = provider.history;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('History'),
@@ -63,8 +27,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 context: context,
                 builder: (context) => AlertDialog(
                   title: const Text('Clear History'),
-                  content:
-                      const Text('Are you sure you want to clear all history?'),
+                  content: const Text('Are you sure you want to clear all history?'),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
@@ -72,7 +35,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        _clearHistory();
+                        provider.clearHistory();
                         Navigator.pop(context);
                       },
                       child: const Text('Clear'),
@@ -85,9 +48,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
         ],
       ),
       body: ListView.builder(
-        itemCount: _history.length,
+        itemCount: history.length,
         itemBuilder: (context, index) {
-          final item = _history[index];
+          final item = history[index];
           return Dismissible(
             key: Key(item.id),
             background: Container(
@@ -97,7 +60,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               child: const Icon(Icons.delete, color: Colors.white),
             ),
             direction: DismissDirection.endToStart,
-            onDismissed: (direction) => _deleteHistoryItem(item.id),
+            onDismissed: (direction) => provider.deleteHistoryItem(item.id),
             child: ListTile(
               title: Text(item.expression),
               subtitle: Text(item.result),
@@ -106,8 +69,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               onTap: () {
-                // Navigate to specific calculator based on type
-                // Implementation depends on your navigation setup
+                // You can navigate to a specific screen based on `item.type`
+                // if needed
               },
             ),
           );

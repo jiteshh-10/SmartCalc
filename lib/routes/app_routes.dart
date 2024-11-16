@@ -3,10 +3,10 @@ import 'package:smart_calc/screens/draw_calculator_screen.dart';
 import 'package:smart_calc/screens/home_screen.dart';
 import 'package:smart_calc/screens/splash_screen.dart';
 import 'package:smart_calc/screens/voice_calculator_screen.dart';
-//import 'package:smart_calc/screens/step_calculator_screen.dart';
 import '../screens/graph_screen.dart';
 import '../screens/history_screen.dart';
 import '../screens/conversion_screen.dart';
+
 class AppRoutes {
   static const String splash = '/';
   static const String home = '/home';
@@ -26,7 +26,6 @@ class AppRoutes {
       graph: (context) => const GraphScreen(),
       history: (context) => const HistoryScreen(),
       conversion: (context) => const ConversionScreen(),
-      //stepCalculator: (context) => const StepCalculatorScreen(),
     };
   }
 }
