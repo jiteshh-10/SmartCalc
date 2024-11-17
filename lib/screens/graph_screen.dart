@@ -12,7 +12,7 @@ class GraphScreen extends StatefulWidget {
 
 class _GraphScreenState extends State<GraphScreen> {
   final TextEditingController _expressionController = TextEditingController();
-  List<FlSpot> _spots = [];
+  final List<FlSpot> _spots = [];
   bool _loading = false;
   String _errorMessage = '';
 

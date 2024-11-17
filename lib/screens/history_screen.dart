@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:smart_calc/models/calculation_history.dart';
 import 'package:smart_calc/providers/calculation_provider.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -27,7 +26,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 context: context,
                 builder: (context) => AlertDialog(
                   title: const Text('Clear History'),
-                  content: const Text('Are you sure you want to clear all history?'),
+                  content:
+                      const Text('Are you sure you want to clear all history?'),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
@@ -69,6 +69,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               onTap: () {
+                Navigator();
                 // You can navigate to a specific screen based on `item.type`
                 // if needed
               },

@@ -15,13 +15,12 @@ class AppRoutes {
   static const String graph = '/graph';
   static const String history = '/history';
   static const String conversion = '/conversion';
-  static const String stepCalculator = '/step-calculator';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
       splash: (context) => const SplashScreen(),
       home: (context) => const HomeScreen(),
-      drawCalculator: (context) => const DrawCalculatorScreen(),
+      drawCalculator: (context) => DrawCalculatorScreen(),
       voiceCalculator: (context) => const VoiceCalculatorScreen(),
       graph: (context) => const GraphScreen(),
       history: (context) => const HistoryScreen(),

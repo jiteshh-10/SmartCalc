@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class GeminiService {
-  static const String apiKey = 'AIzaSyCoOJSQAohg5WVYq_isT3-YJ-0Vfqvt5dI';
+  static const String apiKey = 'AIzaSyBv4k-pJRnVUKqpI63OAwToFR8ZMwRhh70';
   static const String baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 
   // Process an image for calculation using the Gemini API
