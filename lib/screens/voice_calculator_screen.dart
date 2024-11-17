@@ -16,7 +16,6 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
   bool _isListening = false;
   String _transcription = '';
   String _result = '';
-  bool _isProcessing = false;
 
   @override
   void initState() {
@@ -34,7 +33,6 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
         }
       },
       onError: (error) {
-        print('Error: $error');
         _handleSpeechError(error);
       },
     );
@@ -52,7 +50,6 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
   Future<void> _processVoiceInput() async {
     if (_transcription.isEmpty) return;
 
-    setState(() => _isProcessing = true);
     try {
       // Call the provider's method to process the voice input using the Gemini API
       final result = await context.read<CalculationProvider>().processVoiceInput(_transcription);
@@ -60,7 +57,6 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
     } catch (e) {
       setState(() => _result = 'Error processing voice input: $e');
     } finally {
-      setState(() => _isProcessing = false);
     }
   }
 
@@ -105,7 +101,7 @@ class _VoiceCalculatorScreenState extends State<VoiceCalculatorScreen> {
             icon: const Icon(Icons.show_chart),
             onPressed: _result.isNotEmpty
                 ? () {
-                    // TODO: Implement graph view
+                    
                   }
                 : null,
           ),

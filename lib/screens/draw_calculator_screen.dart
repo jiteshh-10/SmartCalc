@@ -20,6 +20,7 @@ class DrawCalculatorScreen extends StatefulWidget {
   const DrawCalculatorScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _DrawCalculatorScreenState createState() => _DrawCalculatorScreenState();
 }
 
@@ -321,7 +322,7 @@ class _DrawCalculatorScreenState extends State<DrawCalculatorScreen> {
                 icon: Icon(Icons.clear),
                 onPressed: clear,
               ),
-              ...colors.map((color) => _buildColorButton(color)).toList(),
+              ...colors.map((color) => _buildColorButton(color)),
               Expanded(
                 child: Slider(
                   value: strokeWidth,
